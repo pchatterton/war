@@ -28,27 +28,87 @@ $(document).ready(function() {
 		}
 	}
 	
+	var shuffleDeck = _.shuffle(deck);
+
 	//shuffle the deck
-	
-	
-	var cards_player_1 = [];
-	var cards_player_2 = [];
+	var cards_player_1 = shuffleDeck.slice(0, shuffleDeck.length/2);
+	var cards_player_2 = shuffleDeck.slice(shuffleDeck.length/2, shuffleDeck.length);
 	//divide out the cards into the two arrays
+
 	
 	
 	//create a function (algorithm) called "war" that takes two cards as parameters, compares them and returns a winner. A tie should return false.
-	function war() {
-	}
+	function war(p1, p2) {
+		if(p1>p2){
+			return "p1";
+		}
+		else if(p1<p2) {
+			return "p2";
+		}
+		else {
+			return false;
+		};
+	};
 	
+	function tie() {
+		var tieNum = 3
+		var tieLoop = true;
+		while(tieLoop) {
+			var p1card = cards_player_1[tieNum].number;
+			var p2card = cards_player_2[tieNum].number;
+			var winner = war(p1card,p2card);
+			
+			if(winner === "p1"){
+				for(i=0; i<tieNum; i++) {
+					cards_player_1.push(cards_player_1[i]);
+					cards_player_1.push(cards_player_2[i]);
+					cards_player_1.shift();
+					cards_player_2.shift();
+				};
+				tieLoop = false;
+			}
+			else if(winner === "p2") {
+				for(i=0; i<tieNum; i++) {
+					cards_player_2.push(cards_player_2[i]);
+					cards_player_2.push(cards_player_1[i]);
+					cards_player_2.shift();
+					cards_player_1.shift();
+				};
+				tieLoop = false;
+			}
+			else {
+				tieNum += 4;
+			};
+
+		};
+
+	};
 	
 	//create a play function
 		//compare the cards
 		//give the winner both cards (at end of deck)
 	function play() {
+		var p1card = cards_player_1[0].number;
+		var p2card = cards_player_2[0].number;
+		var winner = war(p1card,p2card);
+
+		if(winner === "p1"){
+			cards_player_1.push(cards_player_1.shift());
+			cards_player_1.push(cards_player_2[0]);
+			cards_player_2.shift();
+		}
+		else if(winner === "p2") {
+			cards_player_2.push(cards_player_2.shift());
+			cards_player_2.push(cards_player_1[0]);
+			cards_player_1.shift();
+		}
+		else {
+			tie();
+		};
 		
 		//this function (defined below) will continue to the next turn
 		advance();
-	}
+	};
 	
 	function advance() {
 		//take the top two cards and display them
